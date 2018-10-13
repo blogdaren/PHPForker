@@ -1,9 +1,9 @@
 # PHPForker
 
 ## What is PHPForker?
-A simple Multi-Process programming skeleton written in PHP and based on Workerman, which remove the part of Network Event Library, it aims at two aspects by programming in person: 
-* help us study PHP Multi-Process programming 
-* help us find out how Workerman core works 
+A simple Multi-Process programming skeleton written in PHP and based on Workerman, which remove the part of Network Event Library, it aims at two aspects by programming personally： 
+* `help us study PHP Multi-Process programming` 
+* `help us find out how Workerman core works` 
 
 ## Requires
 * \>= PHP 5.3
@@ -35,6 +35,11 @@ for($i = 1; $i <= $totalContainer; $i++)
 ```
 
 ## Demostrate
+![demo1](https://github.com/blogdaren/PHPForker/tree/master/Image/demo1.png)
+![demo2](https://github.com/blogdaren/PHPForker/tree/master/Image/demo2.png)
+![demo3](https://github.com/blogdaren/PHPForker/tree/master/Image/demo3.png)
+![demo4](https://github.com/blogdaren/PHPForker/tree/master/Image/demo4.png)
+![demo5](https://github.com/blogdaren/PHPForker/tree/master/Image/demo5.png)
 
 
 ## Related links and thanks
