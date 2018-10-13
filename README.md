@@ -35,11 +35,11 @@ for($i = 1; $i <= $totalContainer; $i++)
 ```
 
 ## Demostrate
-![demo1](https://github.com/blogdaren/PHPForker/tree/master/Image/demo1.png)
-![demo2](https://github.com/blogdaren/PHPForker/tree/master/Image/demo2.png)
-![demo3](https://github.com/blogdaren/PHPForker/tree/master/Image/demo3.png)
-![demo4](https://github.com/blogdaren/PHPForker/tree/master/Image/demo4.png)
-![demo5](https://github.com/blogdaren/PHPForker/tree/master/Image/demo5.png)
+![demo1](https://github.com/blogdaren/PHPForker/blob/master/Image/demo1.png)
+![demo2](https://github.com/blogdaren/PHPForker/blob/master/Image/demo2.png)
+![demo3](https://github.com/blogdaren/PHPForker/blob/master/Image/demo3.png)
+![demo4](https://github.com/blogdaren/PHPForker/blob/master/Image/demo4.png)
+![demo5](https://github.com/blogdaren/PHPForker/blob/master/Image/demo5.png)
 
 
 ## Related links and thanks
