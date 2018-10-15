@@ -897,6 +897,13 @@ class Container extends Base
         if(!$this->_mainSocket) 
         {
             list($scheme, $address) = explode(':', $this->_socketName, 2);
+
+            //only support tcp & udp currently
+            if(!in_array(strtolower($scheme), array('tcp', 'udp'))) 
+            {
+                self::showHelpByeBye('only support TCP & UDP protocol currently ...');
+            }
+
             $this->transport = $scheme;
             $local_socket = self::$_builtinTransports[$this->transport] . ":" . $address;
 
