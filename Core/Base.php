@@ -114,7 +114,7 @@ class Base
      *
      * @var boolean
      */
-	static	public $daemonize = false;
+    static  public $daemonize = false;
 
     /**
      * log file
@@ -170,7 +170,7 @@ class Base
      *
      * @var array
      */
-	static  protected	$_containers	    = array();
+    static  protected   $_containers =      array();
 
     /**
      * container start time
@@ -265,7 +265,7 @@ class Base
     }
 
     /**
-     * @brief    displayGui     
+     * @brief    displayGui
      *
      * @return   void | boolean
      */
@@ -274,7 +274,7 @@ class Base
         global $argv;
 
         //slient mode
-		if(self::$_isSilentMode) return false;
+        if(self::$_isSilentMode) return false;
 
         //show banner
         self::showBanner();
@@ -282,10 +282,10 @@ class Base
         //show usage
         self::showUsage();
 
-		//show synopsis
+        //show synopsis
         self::showVersion();
 
-		//show containers
+        //show containers
         self::showContainers();
 
         //show log
@@ -296,7 +296,7 @@ class Base
     }
 
     /**
-     * @brief    showSplitLine  
+     * @brief    showSplitLine
      *
      * @param    string  $msg
      *
@@ -304,75 +304,75 @@ class Base
      */
     static public function showSplitLine($msg = '')
     {
-		$total_length = self::getSingleLineTotalLength();
-		$split_line = '<n>' . str_pad("<t>  $msg  </t>", $total_length + strlen('<t></t>'), '-', STR_PAD_BOTH) . '</n>'. PHP_EOL;
+        $total_length = self::getSingleLineTotalLength();
+        $split_line = '<n>' . str_pad("<t>  $msg  </t>", $total_length + strlen('<t></t>'), '-', STR_PAD_BOTH) . '</n>'. PHP_EOL;
         self::safeEcho($split_line);
     }
 
     /**
-     * @brief    showVersion    
+     * @brief    showVersion
      *
      * @return   void
      */
     static public function showVersion()
     {
         self::showSplitLine('PHPForker');
-		$total_length = self::getSingleLineTotalLength();
+        $total_length = self::getSingleLineTotalLength();
         $php_config = self::getPHPConfiguration();
         //attention: $run_time not work expected !! support in future !!
         $run_time = Tool::time2second(time() - self::$_start_time, false);
-		$line_version = 'PHPForker  Version:   ' . self::VERSION . str_pad('PHP Version: ', 31, ' ', STR_PAD_LEFT) . PHP_VERSION . PHP_EOL;
-		$line_version .= 'System     Platform:  ' . PHP_OS . str_pad('PHP Configuration: ', 37, ' ', STR_PAD_LEFT) . $php_config . PHP_EOL;
+        $line_version = 'PHPForker  Version:   ' . self::VERSION . str_pad('PHP Version: ', 31, ' ', STR_PAD_LEFT) . PHP_VERSION . PHP_EOL;
+        $line_version .= 'System     Platform:  ' . PHP_OS . str_pad('PHP Configuration: ', 37, ' ', STR_PAD_LEFT) . $php_config . PHP_EOL;
         $line_version .= 'PHPForker  StartTime: ' . Tool::getHumanLogTime(self::$_start_time);
         //$line_version .= str_pad('PHP StartFile: ', 19, ' ', STR_PAD_LEFT) . self::$_startFile . PHP_EOL;
         $line_version .= str_pad('Run ', 8, ' ', STR_PAD_LEFT) . $run_time . ' (hey, not support yet)' . PHP_EOL;
-		!defined('LINE_VERSIOIN_LENGTH') && define('LINE_VERSIOIN_LENGTH', strlen($line_version));
-		self::safeEcho($line_version);
+        !defined('LINE_VERSIOIN_LENGTH') && define('LINE_VERSIOIN_LENGTH', strlen($line_version));
+        self::safeEcho($line_version);
     }
 
     /**
-     * @brief    showContainers     
+     * @brief    showContainers
      *
      * @return   void
      */
     static public function showContainers()
     {
         self::showSplitLine('Containers');
-		$total_length = self::getSingleLineTotalLength();
-		$title = '';
+        $total_length = self::getSingleLineTotalLength();
+        $title = '';
         foreach(self::getUiColumnsName() as $column_name => $prop)
         {
-			$key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
+            $key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
             $maxKeyLength = self::$_config['ui']['length'][$key];
             $column_name = ucfirst($column_name);
-			$title.= "<s>{$column_name}</s>"  .  str_pad('', $maxKeyLength + self::UI_SAFE_LENGTH - strlen($column_name));
-		}
-		$title && self::safeEcho($title . PHP_EOL);
+            $title.= "<s>{$column_name}</s>"  .  str_pad('', $maxKeyLength + self::UI_SAFE_LENGTH - strlen($column_name));
+        }
+        $title && self::safeEcho($title . PHP_EOL);
 
         $index = 1;
         foreach (self::$_containers as $container) 
         {
-			$content = '';
+            $content = '';
             foreach(self::getUiColumnsName() as $column_name => $prop)
             {
-				$key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
+                $key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
                 $maxKeyLength = self::$_config['ui']['length'][$key];
-				preg_match_all("/(<n>|<\/n>|<w>|<\/w>|<g>|<\/g>|<y>|<\/y>|<s>|<\/s>)/is", $container->{$prop}, $matches);
-				$place_holder_length = !empty($matches) ? strlen(implode('', $matches[0])) : 0;
+                preg_match_all("/(<n>|<\/n>|<w>|<\/w>|<g>|<\/g>|<y>|<\/y>|<s>|<\/s>)/is", $container->{$prop}, $matches);
+                $place_holder_length = !empty($matches) ? strlen(implode('', $matches[0])) : 0;
                 $container->index = '(' . str_pad($index, 2, '0', STR_PAD_LEFT) . ')';
-				$content .= str_pad($container->{$prop}, $maxKeyLength + self::UI_SAFE_LENGTH + $place_holder_length);
-			}
-			$content && self::safeEcho("<g>" . $content . "</g>" . PHP_EOL);
+                $content .= str_pad($container->{$prop}, $maxKeyLength + self::UI_SAFE_LENGTH + $place_holder_length);
+            }
+            $content && self::safeEcho("<g>" . $content . "</g>" . PHP_EOL);
             $index++;
         }
 
-		//show last line
-		$line_last = str_pad('', self::getSingleLineTotalLength(), '-') . PHP_EOL;
+        //show last line
+        $line_last = str_pad('', self::getSingleLineTotalLength(), '-') . PHP_EOL;
         $content && self::safeEcho($line_last);
     }
 
     /**
-     * @brief    showBanner     
+     * @brief    showBanner
      *
      * @return   void
      */
@@ -417,7 +417,7 @@ EOT;
     static public function getUiColumnsName()
     {
         return  self::$_config['ui']['column'];
-	}
+    }
 
     /**
      * @brief    getUiColumnsLength     
@@ -427,7 +427,7 @@ EOT;
     static public function getUiColumnsLength()
     {
         return  self::$_config['ui']['length'];
-	}
+    }
 
     /**
      * @brief    getSingleLineTotalLength   
@@ -438,18 +438,18 @@ EOT;
     {
         $total_length = 0;
 
-		foreach(self::getUiColumnsName() as $column_name => $prop){
-			$key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
+        foreach(self::getUiColumnsName() as $column_name => $prop){
+            $key = 'max' . ucfirst(strtolower($column_name)) . 'NameLength';
             $maxKeyLength = self::$_config['ui']['length'][$key];
-			$total_length += $maxKeyLength + self::UI_SAFE_LENGTH;
-		}
+            $total_length += $maxKeyLength + self::UI_SAFE_LENGTH;
+        }
 
-		//keep beauty when show less colums
-		!defined('LINE_VERSIOIN_LENGTH') && define('LINE_VERSIOIN_LENGTH', 0);
-		$total_length <= LINE_VERSIOIN_LENGTH && $total_length = LINE_VERSIOIN_LENGTH;
-		
-		return $total_length;
-	}
+        //keep beauty when show less colums
+        !defined('LINE_VERSIOIN_LENGTH') && define('LINE_VERSIOIN_LENGTH', 0);
+        $total_length <= LINE_VERSIOIN_LENGTH && $total_length = LINE_VERSIOIN_LENGTH;
+
+        return $total_length;
+    }
 
     /**
      * @brief    getPHPConfiguration    
@@ -471,14 +471,14 @@ EOT;
 
         $match_line = '';
         foreach($buffer as $k => $v)
-        {    
+        {
             preg_match_all("/Loaded Configuration File/is", $v, $matches);
             if(!empty($matches[0])) {
                 $match_line = $v;
                 unset($buffer);
                 break;
-            }    
-        }    
+            }
+        }
 
         $result = explode(" ", $match_line);
         $config = !empty($result) ?  array_pop($result) : 'none';
@@ -487,7 +487,7 @@ EOT;
     }
 
     /**
-     * @brief    showHelpByeBye     
+     * @brief    showHelpByeBye
      *
      * @param    string  $msg
      *
@@ -527,7 +527,7 @@ EOT;
 
 
     /**
-     * @brief    safeEcho   
+     * @brief    safeEcho
      *
      * @param    string  $msg
      * @param    string  $show_colorful
@@ -572,7 +572,7 @@ EOT;
     }
 
     /**
-     * @brief    setOutputStream    
+     * @brief    setOutputStream
      *
      * @param    string  $stream
      *
