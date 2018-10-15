@@ -1033,11 +1033,11 @@ class Container extends Base
             pcntl_signal_dispatch();
             usleep(500000);
 
-            //这两个数组会被改变,所以用两个临时变量
+            //这两个数组会因stream_select()参数"传址"而被改变,所以用两个临时变量
             $tmp_reads = $read_socks;
             $tmp_writes = $write_socks;
 
-            //int socket_select (array &$read , array &$write , array &$except , int $tv_sec [, int $tv_usec = 0 ])
+            //stream_select(array &$read , array &$write , array &$except , int $tv_sec [, int $tv_usec = 0 ])
             //timeout 传 NULL 会一直阻塞直到有结果返回
             $select_result = @stream_select($tmp_reads, $tmp_writes, $except_socks, NULL);  
             if(false === $select_result) continue;
@@ -1046,7 +1046,7 @@ class Container extends Base
             {
                 if($read == $this->_mainSocket)
                 {
-                    //有新的客户端连接请求
+                    //监测到新的客户端连接请求
                     $new_socket = @stream_socket_accept($this->_mainSocket, 0, $remote_address);
                     if(!$new_socket) continue;
 
@@ -1080,15 +1080,14 @@ class Container extends Base
                     }
                     else
                     {
-                        //获取远程客户端ip地址和端口
                         $msg = trim($msg);
                         if(empty($msg)) continue;
                         self::log("receive data from client: {$msg}");
-                        $response = 'welcome to PHPForker: hi,' . $msg;
 
+                        //如果客户端可写,把数据回写给客户端
                         if(in_array($read, $tmp_writes))
                         {
-                            //如果该客户端可写,把数据回写给客户端
+                            $response = 'welcome to PHPForker: hi,' . $msg;
                             self::log("respone data to client: {$response}");
                             fwrite($read, $response . PHP_EOL);
                         }

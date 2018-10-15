@@ -366,7 +366,7 @@ class Base
             $index++;
         }
 
-		//Show last line
+		//show last line
 		$line_last = str_pad('', self::getSingleLineTotalLength(), '-') . PHP_EOL;
         $content && self::safeEcho($line_last);
     }
