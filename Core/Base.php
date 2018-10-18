@@ -234,6 +234,13 @@ class Base
         PHP_SAPI != 'cli' && self::showHelpByeBye("only run in command line mode");
         !extension_loaded('posix') && self::showHelpByeBye('please ensure POSIX extension are installed');
         !extension_loaded('pcntl') && self::showHelpByeBye('please ensure PCNTL extension are installed');
+        $check_result = Tool::checkIfFunctionIsDisabled();
+        if($check_result !== false) 
+        {
+            $php_config = self::getPHPConfiguration();
+            $msg = "`$check_result` function may be disabled, Please check disable_functions in {$php_config}";
+            self::showHelpByeBye($msg);
+        }
 
         return true;
     }
@@ -499,7 +506,7 @@ EOT;
         {
             !is_string($msg) && $msg = json_encode($msg);
             self::showSplitLine('Error');
-            $error_msg = PHP_EOL . "Error: " . wordwrap($msg, 72, "\n  ") . PHP_EOL . PHP_EOL;
+            $error_msg = PHP_EOL . "Error: " . wordwrap($msg, 72, "\n        ") . PHP_EOL . PHP_EOL;
             Color::showError($error_msg);
         }
 

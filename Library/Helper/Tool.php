@@ -675,6 +675,44 @@ class Tool
 
         return false;
     }
+
+    /**
+     * @brief    检测函数是否已经被平台禁用
+     *
+     * @param    string|array  $input_function
+     *
+     * @return   boolean | string   
+     */
+    public static function checkIfFunctionIsDisabled($input_function = array())
+    {
+        //可能被禁用的函数
+        $internal_function = array(
+            'stream_socket_server',
+            'stream_socket_client',
+        );
+
+        !is_array($input_function) && $input_function = array($input_function);
+        $depth = self::getArrayDepth($input_function);
+        $depth <> 1 && $input_function = array();
+        $check_functions = array_merge($internal_function, $input_function);
+
+        $disabled_functions = array();
+        if($config = @ini_get("disable_functions"))
+        {
+            $disabled_functions = explode(',', $config);
+        }
+
+        //遍历查看是否有被禁用的函数
+        foreach($check_functions as $check_function)
+        {
+            if(in_array($check_function, $disabled_functions))
+            {
+                return $check_function;
+            }
+        }
+
+        return false;
+    }
 }
 
 

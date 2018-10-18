@@ -247,7 +247,7 @@ class Container extends Base
         $command1 = trim($argv[1]);
         $command2 = isset($argv[2]) ? trim($argv[2]) : '';
 
-        //command2 == -h | -q | -d 
+        //command2 == -h | -d | -g | -q | -v | -vv | -vvv | ...
         $command2 == '-h' && self::showHelpByeBye();
         $command2 == '-d' && self::$daemonize = true;
         $command2 == '-g' && self::$_gracefulStop = true;
