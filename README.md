@@ -10,6 +10,9 @@ PHPForker是一个PHP多进程编程骨架，借鉴了Workerman诸多优良编�
 * `学习PHP多进程编程思想` 
 * `学习Workerman内核工作原理`
 
+## Installation
+composer require blogdaren/phpforker
+
 ## Prerequisites
 * \>= PHP 5.3
 * A POSIX compatible operating system (Linux, OSX, BSD)  
@@ -20,7 +23,8 @@ PHPForker是一个PHP多进程编程骨架，借鉴了Workerman诸多优良编�
 
 ```php
 <?php
-require_once dirname(__DIR__). '/Autoloader.php';
+//require_once dirname(__DIR__). '/Autoloader.php';
+require_once __DIR__. '/vendor/autoload.php';
 
 use PHPForker\Container;
 
