@@ -11,7 +11,9 @@ PHPForker是一个PHP多进程编程骨架，借鉴了Workerman诸多优良编�
 * `学习Workerman内核工作原理`
 
 ## Installation
+```
 composer require blogdaren/phpforker
+```
 
 ## Prerequisites
 * \>= PHP 5.3
