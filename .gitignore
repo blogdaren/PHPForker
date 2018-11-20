@@ -1,4 +1,5 @@
 *.log
+*.pid
 .idea
 .buildpath
 .project

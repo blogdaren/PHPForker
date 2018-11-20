@@ -1,0 +1,31 @@
+{
+    "name": "blogdaren/phpforker",
+    "type": "library",
+    "keywords": [
+        "asynchronous"
+    ],
+    "homepage": "http://www.blogdaren.com",
+    "license": "MIT",
+    "description": "A simple Multi-Process programming skeleton written in PHP and learned much from Workerman, which remove the part of Network Event Library, it aims at two aspects by programming personally",
+    "authors": [
+        {
+            "name": "blogdaren",
+            "email": "blogdaren@163.com",
+            "homepage": "http://www.blogdaren.com",
+            "role": "developer"
+        }
+    ],
+    "support": {
+    },
+    "require": {
+        "php": ">=5.3"
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPForker\\": "./"
+        }
+    },
+    "minimum-stability": "dev"
+}
