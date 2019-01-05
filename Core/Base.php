@@ -409,7 +409,7 @@ EOT;
 Usage: /path/to/php  /path/to/xxx.php  <command>  [option]  
 <command>:                             [option]:
   start          启动所有容器实例         -d            化身为守护进程并在后台运行
-  stop           停止所有容器实例         -g            优雅的stop或reboot容器实例
+  stop           停止所有容器实例         -g            优雅的stop或reload容器实例
   reboot         重启所有容器实例         -h            在控制台打印本脚本使用说明
   reload         热启所有容器实例         -v            分层次打印对应级别日志数据
 
