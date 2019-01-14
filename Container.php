@@ -130,6 +130,13 @@ class Container extends Base
     public $listening = '';
 
     /**
+     * keep how many client connections for one process
+     *
+     * @var int
+     */
+    static public $connectionCount = 0;
+
+    /**
      * @brief    __construct    
      *
      * @param    string  $socket_name
@@ -315,6 +322,8 @@ class Container extends Base
                 }
                 break;
             case 'reload':
+                //remember to fix me 
+                self::$_gracefulStop = false; 
                 $signal = self::$_gracefulStop ? SIGQUIT : SIGUSR1;
                 posix_kill($master_pid, $signal);
                 exit;
@@ -545,7 +554,7 @@ class Container extends Base
         restore_error_handler();
         
         //main loop ready for accept connection from client
-        self::readyForAcceptClientConnection();
+        $this->readyForAcceptClientConnection();
     }
 
     /**
@@ -800,8 +809,11 @@ class Container extends Base
                 }
             }
 
-            self::$_containers = array();
-            exit(0);
+            if(!self::$_gracefulStop || self::$connectionCount <= 0) 
+            {
+                self::$_containers = array();
+                exit(0);
+            }
         }
     }
 
@@ -1017,7 +1029,7 @@ class Container extends Base
     }
 
     /**
-     * @brief    just implement a simple `tcp sever` with SELECT Multiplex for demostrating !!!
+     * @brief    just implement a simple `tcp server` with Select Multiplex for demostrating !!!
      *
      * @return   void
      */
@@ -1030,28 +1042,37 @@ class Container extends Base
 
         while(1)
         {
-            pcntl_signal_dispatch();
-            usleep(500000);
+            usleep(100000);
 
-            //这两个数组会因stream_select()参数"传址"而被改变,所以用两个临时变量
+            //很重要!!!
+            pcntl_signal_dispatch();
+
+            //这两个数组会因stream_select()参数"传址"而被改变,所以用两个临时变量.
             $tmp_reads = $read_socks;
             $tmp_writes = $write_socks;
 
+            //当前进程维持的连接数
+            self::$connectionCount <> count($write_socks) && self::$connectionCount = count($write_socks);
+
+            //deal with the graceful action
+            global $argv;
+            if(trim($argv[1]) <> 'reboot' && self::$_gracefulStop && self::$connectionCount <= 0) Container::stopAll();
+
             //stream_select(array &$read , array &$write , array &$except , int $tv_sec [, int $tv_usec = 0 ])
             //timeout 传 NULL 会一直阻塞直到有结果返回
-            $select_result = @stream_select($tmp_reads, $tmp_writes, $except_socks, NULL);  
-            if(false === $select_result) continue;
+            $select_number = @stream_select($tmp_reads, $tmp_writes, $except_socks, NULL);  
+            if(false === $select_number) continue;
 
-            foreach($tmp_reads as $read)
+            foreach($tmp_reads as $socket)
             {
-                if($read == $this->_mainSocket)
+                if($socket == $this->_mainSocket)
                 {
                     //监测到新的客户端连接请求
                     $new_socket = @stream_socket_accept($this->_mainSocket, 0, $remote_address);
                     if(!$new_socket) continue;
 
                     $local_address = $this->transport . '://' . stream_socket_get_name($new_socket, false);
-                    self::log("local sever now in service: {$local_address}", self::LOG_LEVEL_DEBUG);
+                    self::log("local server now in service: {$local_address}", self::LOG_LEVEL_DEBUG);
                     self::log("receive connect from client: {$remote_address}");
 
                     //把新的连接sokcet加入监听
@@ -1061,22 +1082,22 @@ class Container extends Base
                 else
                 {
                     //从客户端读取数据, 此时一定会读到数组而不会产生阻塞
-                    $msg = fread($read, 65535);  
+                    $msg = fread($socket, 65535);  
 
                     if($msg === '')
                     {
                         //移除对该 socket 监听
                         foreach($read_socks as $k => $v)
                         {
-                            if($v == $read) unset($read_socks[$k]);
+                            if($v == $socket) unset($read_socks[$k]);
                         }
 
                         foreach($write_socks as $k => $v)
                         {
-                            if($v == $read) unset($write_socks[$k]);
+                            if($v == $socket) unset($write_socks[$k]);
                         }
 
-                        fclose($read);
+                        fclose($socket);
                     }
                     else
                     {
@@ -1085,11 +1106,11 @@ class Container extends Base
                         self::log("receive data from client: {$msg}");
 
                         //如果客户端可写,把数据回写给客户端
-                        if(in_array($read, $tmp_writes))
+                        if(in_array($socket, $tmp_writes))
                         {
-                            $response = 'welcome to PHPForker: hi,' . $msg;
-                            self::log("respone data to client: {$response}");
-                            fwrite($read, $response . PHP_EOL);
+                            $reply = 'hey, you said: ' . $msg;
+                            self::log("respone data to   client: {$reply}");
+                            fwrite($socket, $reply . PHP_EOL);
                         }
                     }
                 }
