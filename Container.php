@@ -13,6 +13,7 @@ use PHPForker\Library\Helper\Tool;
 use PHPForker\Library\Helper\Timer;
 use PHPForker\Library\CustomTerminalColor\Color;
 use PHPForker\Core\Base;
+use PHPForker\Core\Connection;
 require_once __DIR__ . '/Library/Common/Functions.php';
 
 class Container extends Base
@@ -128,13 +129,6 @@ class Container extends Base
      * @var boolean
      */
     public $listening = '';
-
-    /**
-     * keep how many client connections for one process
-     *
-     * @var int
-     */
-    static public $connectionCount = 0;
 
     /**
      * @brief    __construct    
@@ -322,8 +316,6 @@ class Container extends Base
                 }
                 break;
             case 'reload':
-                //remember to fix me 
-                self::$_gracefulStop = false; 
                 $signal = self::$_gracefulStop ? SIGQUIT : SIGUSR1;
                 posix_kill($master_pid, $signal);
                 exit;
@@ -734,8 +726,10 @@ class Container extends Base
             }
         }
 
-        @unlink(self::$masterPidFile);
+        $master_pid = self::getMasterPid();
+        self::log("master_pid: {$master_pid} exit with status 0");
         self::log("Container [" . basename(self::$_startFile) . "] has been stopped...", self::LOG_LEVEL_DEBUG);
+        @unlink(self::$masterPidFile);
         exit(0);
     }
 
@@ -809,7 +803,7 @@ class Container extends Base
                 }
             }
 
-            if(!self::$_gracefulStop || self::$connectionCount <= 0) 
+            if(!self::$_gracefulStop || Connection::$connectionCount <= 1) 
             {
                 self::$_containers = array();
                 exit(0);
@@ -966,7 +960,6 @@ class Container extends Base
             set_error_handler(function(){});
             fclose($this->_mainSocket);
             $this->_mainSocket = null;
-            //self::log("成功关闭 socket 套接字...");
             restore_error_handler();
         }
     }
@@ -1012,8 +1005,10 @@ class Container extends Base
 
     /**  
      * check if child processes is really running
+     *
+     * @return void
      */
-    public static function checkIfChildIsRunning()
+    static public function checkIfChildIsRunning()
     {    
         foreach(self::$_pidMap as $hash_id => $container_pid_array) 
         {
@@ -1029,6 +1024,16 @@ class Container extends Base
     }
 
     /**
+     * @brief    check if in graceful stop mode
+     *
+     * @return   boolean
+     */
+    static public function isGracefulStop()
+    {
+        return self::$_gracefulStop;
+    }
+
+    /**
      * @brief    just implement a simple `tcp server` with Select Multiplex for demostrating !!!
      *
      * @return   void
@@ -1036,7 +1041,7 @@ class Container extends Base
     public function readyForAcceptClientConnection()
     {
         //要监听的三个sockets数组
-        $read_socks = $write_socks =  array();
+        $read_socks = $write_socks = array();
         $except_socks = NULL;  
         $read_socks[] = $this->_mainSocket;
 
@@ -1051,19 +1056,12 @@ class Container extends Base
             $tmp_reads = $read_socks;
             $tmp_writes = $write_socks;
 
-            //当前进程维持的连接数
-            self::$connectionCount <> count($write_socks) && self::$connectionCount = count($write_socks);
-
-            //deal with the graceful action
-            global $argv;
-            if(trim($argv[1]) <> 'reboot' && self::$_gracefulStop && self::$connectionCount <= 0) Container::stopAll();
-
             //stream_select(array &$read , array &$write , array &$except , int $tv_sec [, int $tv_usec = 0 ])
             //timeout 传 NULL 会一直阻塞直到有结果返回
             $select_number = @stream_select($tmp_reads, $tmp_writes, $except_socks, NULL);  
             if(false === $select_number) continue;
 
-            foreach($tmp_reads as $socket)
+            foreach($tmp_reads as $cid => $socket)
             {
                 if($socket == $this->_mainSocket)
                 {
@@ -1076,15 +1074,16 @@ class Container extends Base
                     self::log("receive connect from client: {$remote_address}");
 
                     //把新的连接sokcet加入监听
-                    $read_socks[] = $new_socket;
-                    $write_socks[] = $new_socket;
+                    $connection = new Connection();
+                    $read_socks[$connection->id] = $new_socket;
+                    $write_socks[$connection->id] = $new_socket;
                 }
                 else
                 {
                     //从客户端读取数据, 此时一定会读到数组而不会产生阻塞
                     $msg = fread($socket, 65535);  
 
-                    if($msg === '')
+                    if($msg === '' || $msg == false)
                     {
                         //移除对该 socket 监听
                         foreach($read_socks as $k => $v)
@@ -1096,6 +1095,9 @@ class Container extends Base
                         {
                             if($v == $socket) unset($write_socks[$k]);
                         }
+
+                        //remember to fix me: why not trigger Connection::__destruct() for the first time? 
+                        if($cid > 0) unset(Connection::$connections[$cid]);
 
                         fclose($socket);
                     }
