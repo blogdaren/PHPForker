@@ -1103,8 +1103,8 @@ class Container extends Base
                         }
 
                         fclose($socket);
-
                         self::log("child__pid: {$child_pid} 第({$cid})号连接已经关闭");
+                        if($cid > 0) unset(Connection::$connections[$cid]);
                     }
                     else
                     {
