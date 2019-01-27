@@ -64,11 +64,23 @@ class Connection
     public function __destruct()
     {
         self::$connectionCount--;
+        $pid = posix_getpid();
+        Container::log("child__pid: {$pid} still have " . self::$connectionCount . " connecions alived", Container::LOG_LEVEL_WARN);
 
         if(Container::isGracefulStop() && self::$connectionCount <= 1) 
         {
             Container::stopAll();
         }
+    }
+
+    /**
+     * @brief    getTotalConnections    
+     *
+     * @return   int 
+     */
+    static public function getTotalConnections()
+    {
+        return self::$connectionCount;
     }
 }
 

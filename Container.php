@@ -1044,6 +1044,7 @@ class Container extends Base
         $read_socks = $write_socks = array();
         $except_socks = NULL;  
         $read_socks[] = $this->_mainSocket;
+        $child_pid = posix_getpid();
 
         while(1)
         {
@@ -1061,6 +1062,7 @@ class Container extends Base
             $select_number = @stream_select($tmp_reads, $tmp_writes, $except_socks, NULL);  
             if(false === $select_number) continue;
 
+            //!empty($tmp_reads) && pprint($this->_mainSocket, $tmp_reads, $read_socks, $write_socks);
             foreach($tmp_reads as $cid => $socket)
             {
                 if($socket == $this->_mainSocket)
@@ -1071,12 +1073,16 @@ class Container extends Base
 
                     $local_address = $this->transport . '://' . stream_socket_get_name($new_socket, false);
                     self::log("local server now in service: {$local_address}", self::LOG_LEVEL_DEBUG);
-                    self::log("receive connect from client: {$remote_address}");
+                    self::log("child__pid: {$child_pid} recv connect from client: {$remote_address}");
 
                     //把新的连接sokcet加入监听
                     $connection = new Connection();
                     $read_socks[$connection->id] = $new_socket;
                     $write_socks[$connection->id] = $new_socket;
+
+                    //统计当前进程维持了多少连接
+                    $total_connections = Connection::getTotalConnections();
+                    Container::log("child__pid: {$child_pid} still have {$total_connections} connecions alived", Container::LOG_LEVEL_WARN);
                 }
                 else
                 {
@@ -1096,22 +1102,21 @@ class Container extends Base
                             if($v == $socket) unset($write_socks[$k]);
                         }
 
-                        //remember to fix me: why not trigger Connection::__destruct() for the first time? 
-                        if($cid > 0) unset(Connection::$connections[$cid]);
-
                         fclose($socket);
+
+                        self::log("child__pid: {$child_pid} 第({$cid})号连接已经关闭");
                     }
                     else
                     {
                         $msg = trim($msg);
                         if(empty($msg)) continue;
-                        self::log("receive data from client: {$msg}");
+                        self::log("child__pid: {$child_pid} 第({$cid})号连接 recv data from client: {$msg}");
 
                         //如果客户端可写,把数据回写给客户端
                         if(in_array($socket, $tmp_writes))
                         {
-                            $reply = 'hey, you said: ' . $msg;
-                            self::log("respone data to   client: {$reply}");
+                            $reply = 'hey:' . $msg;
+                            self::log("child__pid: {$child_pid} 第({$cid})号连接 send data to   client: {$reply}");
                             fwrite($socket, $reply . PHP_EOL);
                         }
                     }
