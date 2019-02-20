@@ -4,7 +4,7 @@
  * @brief    This file is part of PHPForker
  * @author   blogdaren<blogdaren@163.com>
  * @link     http://www.blogdaren.com
- * @version  1.0.0
+ * @version  1.0.1
  * @modify   2018-09-25
  */
 
