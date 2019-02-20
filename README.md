@@ -43,6 +43,8 @@ for($i = 1; $i <= $totalContainer; $i++)
         'user' => 'root',
     ]);
 }
+
+Container::start();
 ```
 
 ## Demostrate
