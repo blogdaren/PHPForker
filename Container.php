@@ -803,7 +803,7 @@ class Container extends Base
                 }
             }
 
-            if(!self::$_gracefulStop || Connection::$connectionCount <= 1) 
+            if(!self::$_gracefulStop || Connection::$connectionCount <= 0) 
             {
                 self::$_containers = array();
                 exit(0);
@@ -1104,7 +1104,7 @@ class Container extends Base
 
                         fclose($socket);
                         self::log("child__pid: {$child_pid} 第({$cid})号连接已经关闭");
-                        if($cid > 0) unset(Connection::$connections[$cid]);
+                        if($cid > 0) unset(Connection::$connections[$cid], $connection);
                     }
                     else
                     {

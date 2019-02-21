@@ -56,6 +56,8 @@ Container::start();
 ----
 ![demo4](https://github.com/blogdaren/PHPForker/blob/master/Image/demo4.png)
 ----
+![demo6](https://github.com/blogdaren/PHPForker/blob/master/Image/demo6.png)
+----
 ![demo5](https://github.com/blogdaren/PHPForker/blob/master/Image/demo5.png)
 
 ## Documentation

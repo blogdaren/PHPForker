@@ -67,7 +67,7 @@ class Connection
         $pid = posix_getpid();
         Container::log("child__pid: {$pid} still have " . self::$connectionCount . " connecions alived", Container::LOG_LEVEL_WARN);
 
-        if(Container::isGracefulStop() && self::$connectionCount <= 1) 
+        if(Container::isGracefulStop() && self::$connectionCount <= 0) 
         {
             Container::stopAll();
         }
