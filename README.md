@@ -47,7 +47,7 @@ for($i = 1; $i <= $totalContainer; $i++)
 Container::start();
 ```
 
-## Demostrate
+## Screenshot
 ![demo1](https://github.com/blogdaren/PHPForker/blob/master/Image/demo1.png)
 ----
 ![demo2](https://github.com/blogdaren/PHPForker/blob/master/Image/demo2.png)
