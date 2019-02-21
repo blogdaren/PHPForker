@@ -1072,7 +1072,7 @@ class Container extends Base
                     if(!$new_socket) continue;
 
                     $local_address = $this->transport . '://' . stream_socket_get_name($new_socket, false);
-                    self::log("local server now in service: {$local_address}", self::LOG_LEVEL_DEBUG);
+                    self::log("local server is now ready in service: {$local_address}", self::LOG_LEVEL_DEBUG);
                     self::log("child__pid: {$child_pid} recv connect from client: {$remote_address}");
 
                     //把新的连接sokcet加入监听
