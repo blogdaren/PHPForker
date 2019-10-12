@@ -585,7 +585,7 @@ EOT;
      *
      * @return   boolean
      */
-    static private function setOutputStream($stream = null)
+    static protected function setOutputStream($stream = null)
     {
         if(!$stream) 
         {
