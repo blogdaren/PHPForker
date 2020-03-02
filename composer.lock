@@ -1,0 +1,103 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "ed5f1bd367efef704c3feafcec79df6d",
+    "packages": [
+        {
+            "name": "blogdaren/custom-terminal-color",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/blogdaren/CustomTerminalColor.git",
+                "reference": "7927a1e1e1c5af65e130f56c08d88b2d8c081b3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/blogdaren/CustomTerminalColor/zipball/7927a1e1e1c5af65e130f56c08d88b2d8c081b3f",
+                "reference": "7927a1e1e1c5af65e130f56c08d88b2d8c081b3f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CustomTerminalColor\\": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "blogdaren",
+                    "role": "developer",
+                    "email": "blogdaren@163.com",
+                    "homepage": "http://www.blogdaren.com"
+                }
+            ],
+            "description": "A toolkit used to display customizable & colorful text on terminal with PHP",
+            "homepage": "http://www.blogdaren.com",
+            "time": "2018-11-20T18:00:47+00:00"
+        },
+        {
+            "name": "blogdaren/logger",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/blogdaren/Logger.git",
+                "reference": "36467b651d5aa2d152df1c01f5e90b04517daef8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/blogdaren/Logger/zipball/36467b651d5aa2d152df1c01f5e90b04517daef8",
+                "reference": "36467b651d5aa2d152df1c01f5e90b04517daef8",
+                "shasum": ""
+            },
+            "require": {
+                "blogdaren/custom-terminal-color": "^1.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Logger\\": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "blogdaren",
+                    "role": "developer",
+                    "email": "blogdaren@163.com",
+                    "homepage": "http://www.blogdaren.com"
+                }
+            ],
+            "description": "A simple console logger for PHP",
+            "homepage": "http://www.blogdaren.com",
+            "keywords": [
+                "logger"
+            ],
+            "time": "2018-11-28T18:22:39+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "blogdaren/logger": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3"
+    },
+    "platform-dev": []
+}
