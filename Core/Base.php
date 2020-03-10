@@ -19,7 +19,7 @@ class Base
      *
      * @var string
      */
-    const VERSION = '1.0.3';
+    const VERSION = '1.0.4';
 
     /**
      * when force to kill process:
