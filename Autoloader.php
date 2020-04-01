@@ -42,8 +42,8 @@ class Autoloader
     public static function loadByNamespace($name)
     {
         $class_path = str_replace('\\', DIRECTORY_SEPARATOR, $name);
-        if (strpos($name, 'Container\\') === 0) {
-            $class_file = __DIR__ . substr($class_path, strlen('Container')) . '.php';
+        if (strpos($name, 'PHPForker\\') === 0) {
+            $class_file = __DIR__ . substr($class_path, strlen('PHPForker')) . '.php';
         } else {
             if (self::$_autoloadRootPath) {
                 $class_file = self::$_autoloadRootPath . DIRECTORY_SEPARATOR . $class_path . '.php';

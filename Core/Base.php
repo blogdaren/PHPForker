@@ -647,8 +647,11 @@ EOT;
      */
     static protected function reinstallSignal()
     {
+        //in fact, it is unncessary to do this unless we use other event-driven signal mechanism,
+        //obviously here it is just a simulation show how to reinstall the signal
         self::removeSignal();
         self::installSignal();
+
         //self::log("child__pid: " . posix_getpid() . " 子进程安装信号成功");
     }
 
